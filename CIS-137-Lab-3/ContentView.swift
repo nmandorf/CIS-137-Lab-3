@@ -49,6 +49,12 @@ struct TileView: View {
                 .padding()
                 .opacity(card.isFaceUp ? 1 : 0)
         }
+        .rotation3DEffect(
+                    Angle.degrees(card.isFaceUp ? 0 : 180),
+                    axis: (x: 0, y: 1, z: 0)
+                )
+                .animation(.easeInOut(duration: 0.3), value: card.isFaceUp)
+        
     }
 }
 

@@ -11,6 +11,7 @@ import Foundation
 struct MemoryGameModel {
     private(set) var cards: Array<Card>
     private(set) var numberOfPairs: Int
+    private var indexOfTheOneAndOnlyFaceUpCard: Int?
     
     struct Card: Identifiable {
         var imageFile: String
@@ -20,9 +21,29 @@ struct MemoryGameModel {
     }
     
     mutating func chooseCard(card: Card) {
-        for index in cards.indices {
-            if cards[index].id == card.id {
-                cards[index].isFaceUp.toggle()
+        if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }),
+           !cards[chosenIndex].isFaceUp,
+           !cards[chosenIndex].isMatched {
+
+            if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard {
+
+                if cards[potentialMatchIndex].imageFile == cards[chosenIndex].imageFile {
+                    cards[potentialMatchIndex].isMatched = true
+                    cards[chosenIndex].isMatched = true
+                }
+
+                cards[chosenIndex].isFaceUp = true
+                indexOfTheOneAndOnlyFaceUpCard = nil
+
+            } else {
+                for index in cards.indices {
+                    if !cards[index].isMatched {
+                        cards[index].isFaceUp = false
+                    }
+                }
+
+                cards[chosenIndex].isFaceUp = true
+                indexOfTheOneAndOnlyFaceUpCard = chosenIndex
             }
         }
     }
